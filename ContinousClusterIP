@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: knote
+spec:
+  selector:
+    matchLabels:
+      app: knote
+      tier: frontend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: knote
+        tier: frontend
+    spec:
+      containers:
+      - name: app
+        image: learnitguide/knote
+        ports:
+          - containerPort: 3030
+        env:
+        - name: MANGO_URL
+          value: mangodb:mango:27017/dev 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: knote-outer
+spec:
+  selector:
+     app: knote
+     tier: frontend
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      
+  type: LoadBalancer
